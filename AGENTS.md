@@ -56,9 +56,9 @@ Repository guide for coding agents working in `server-q3t-fk`.
 ### End-to-end verification (recommended)
 
 - Full pipeline (local Whisper, API in Docker):
-  - `python3 scripts/verify_pipeline.py --base-url http://127.0.0.1:8080 --examples data/examples.txt --limit 0 --threshold 0.65 --whisper-device cpu`
+- `python3 scripts/verify_pipeline.py --base-url http://127.0.0.1:19161 --examples data/examples.txt --limit 0 --threshold 0.65 --whisper-device cpu`
 - Quick smoke (single case):
-  - `python3 scripts/verify_pipeline.py --base-url http://127.0.0.1:8080 --examples data/examples.txt --limit 1 --threshold 0.65 --whisper-device cpu`
+- `python3 scripts/verify_pipeline.py --base-url http://127.0.0.1:19161 --examples data/examples.txt --limit 1 --threshold 0.65 --whisper-device cpu`
 
 ### Notes on verification scope
 

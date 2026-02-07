@@ -124,7 +124,7 @@ def run(base_url: str, examples_path: Path, limit: int, threshold: float, whispe
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="End-to-end verification: voice-design -> voice-clone -> voice-sr -> whisper tiny")
-    parser.add_argument("--base-url", default="http://127.0.0.1:8080", help="Public nginx URL")
+    parser.add_argument("--base-url", default="http://127.0.0.1:19161", help="Public nginx URL")
     parser.add_argument("--examples", default="data/examples.txt", help="Path to examples file")
     parser.add_argument("--limit", type=int, default=5, help="Number of rows to test (0=all)")
     parser.add_argument("--threshold", type=float, default=0.65, help="Average similarity threshold")

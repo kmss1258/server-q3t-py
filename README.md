@@ -14,7 +14,7 @@ The server only supports those two Qwen models for TTS and keeps request audio i
 docker compose up --build
 ```
 
-Default exposed address is `http://127.0.0.1:8080`.
+Default exposed address is `http://127.0.0.1:19161`.
 
 ## Environment
 
@@ -30,7 +30,7 @@ Default exposed address is `http://127.0.0.1:8080`.
 - `NOVASR_DEVICE`: `cuda`, `cpu`, or `auto` (default `cuda`)
 - `NOVASR_HALF`: `1` or `0`
 - `HOST_BIND_IP`: nginx bind IP (default `0.0.0.0`)
-- `HOST_PORT`: nginx port (default `8080`)
+- `HOST_PORT`: nginx port (default `19161`)
 
 ## API contracts
 
@@ -83,7 +83,7 @@ pytest -q
 This runs outside Docker against nginx and does not write generated audio to local files.
 
 ```bash
-python scripts/verify_pipeline.py --base-url http://127.0.0.1:8080 --examples data/examples.txt --limit 5 --threshold 0.65 --whisper-device cpu
+python scripts/verify_pipeline.py --base-url http://127.0.0.1:19161 --examples data/examples.txt --limit 5 --threshold 0.65 --whisper-device cpu
 ```
 
 Pipeline:
