@@ -23,7 +23,7 @@ Default exposed address is `http://127.0.0.1:19161`.
 - `CUDA_VISIBLE_DEVICES`: app-level GPU visibility (default `0`)
 - `VOICE_DEVICE`: model device map (default `cuda`)
 - `VOICE_DTYPE`: preferred dtype (`bfloat16`, `float16`, or `float32`)
-- `VOICE_CUDA_FALLBACK_DTYPE`: CUDA fallback dtype when preferred dtype fails (default `float16`)
+- `VOICE_CUDA_FALLBACK_DTYPE`: CUDA fallback dtype when preferred dtype fails (default `float32`)
 - `VOICE_REQUIRE_CUDA`: require CUDA for TTS load (`1` default). If CUDA load fails, startup request fails instead of CPU fallback.
 - `VOICE_ALLOW_CPU_FALLBACK`: allow CPU fallback for TTS (`0` default)
 - `VOICE_ATTN_IMPL`: optional (`flash_attention_2` only if flash-attn is installed)
