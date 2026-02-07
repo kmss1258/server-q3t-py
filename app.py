@@ -41,6 +41,7 @@ class Settings:
     hf_token: Optional[str] = os.getenv("HF_TOKEN")
     voice_device: str = os.getenv("VOICE_DEVICE", "cuda")
     voice_dtype: str = os.getenv("VOICE_DTYPE", "bfloat16")
+    voice_clone_dtype: str = os.getenv("VOICE_CLONE_DTYPE", "float16")
     voice_cuda_fallback_dtype: str = os.getenv("VOICE_CUDA_FALLBACK_DTYPE", "float16")
     voice_require_cuda: bool = os.getenv("VOICE_REQUIRE_CUDA", "1") == "1"
     voice_allow_cpu_fallback: bool = os.getenv("VOICE_ALLOW_CPU_FALLBACK", "0") == "1"
@@ -110,27 +111,37 @@ class TTSService:
             )
 
         dtype = _torch_dtype(settings.voice_dtype)
+        clone_dtype = _torch_dtype(settings.voice_clone_dtype)
         if device == "cpu":
             dtype = torch.float32
+            clone_dtype = torch.float32
 
         cuda_fallback_dtype = _torch_dtype(settings.voice_cuda_fallback_dtype)
         if cuda_fallback_dtype == torch.bfloat16:
             cuda_fallback_dtype = torch.float16
 
-        voice_design_path = snapshot_download(repo_id=VOICE_DESIGN_MODEL_ID, token=settings.hf_token)
-        voice_clone_path = snapshot_download(repo_id=VOICE_CLONE_MODEL_ID, token=settings.hf_token)
+        self._voice_design_path = snapshot_download(repo_id=VOICE_DESIGN_MODEL_ID, token=settings.hf_token)
+        self._voice_clone_path = snapshot_download(repo_id=VOICE_CLONE_MODEL_ID, token=settings.hf_token)
+        self._voice_attn = settings.voice_attn
+        self._hf_token = settings.hf_token
+        self._runtime_lock = threading.Lock()
 
-        def _load(device_map: str, load_dtype: torch.dtype):
+        def _load_model(model_path: str, device_map: str, load_dtype: torch.dtype) -> Qwen3TTSModel:
             model_kwargs = {
                 "device_map": device_map,
                 "dtype": load_dtype,
-                "token": settings.hf_token,
+                "token": self._hf_token,
             }
-            if settings.voice_attn:
-                model_kwargs["attn_implementation"] = settings.voice_attn
-            design_model = Qwen3TTSModel.from_pretrained(voice_design_path, **model_kwargs)
-            clone_model = Qwen3TTSModel.from_pretrained(voice_clone_path, **model_kwargs)
+            if self._voice_attn:
+                model_kwargs["attn_implementation"] = self._voice_attn
+            return Qwen3TTSModel.from_pretrained(model_path, **model_kwargs)
+
+        def _load(device_map: str, load_dtype: torch.dtype):
+            design_model = _load_model(self._voice_design_path, device_map, load_dtype)
+            clone_model = _load_model(self._voice_clone_path, device_map, clone_dtype if device_map.startswith("cuda") else load_dtype)
             return design_model, clone_model
+
+        self._load_model = _load_model
 
         if device.startswith("cuda"):
             cuda_attempts = [dtype]
@@ -176,15 +187,32 @@ class TTSService:
         x_vector_only_mode: bool,
         max_new_tokens: int,
     ) -> tuple[np.ndarray, int]:
-        wavs, sr = self.voice_clone.generate_voice_clone(
-            text=target_text,
-            language=language,
-            ref_audio=ref_audio,
-            ref_text=ref_text,
-            x_vector_only_mode=x_vector_only_mode,
-            non_streaming_mode=True,
-            max_new_tokens=max_new_tokens,
-        )
+        def _run_clone() -> tuple[list[np.ndarray], int]:
+            return self.voice_clone.generate_voice_clone(
+                text=target_text,
+                language=language,
+                ref_audio=ref_audio,
+                ref_text=ref_text,
+                x_vector_only_mode=x_vector_only_mode,
+                non_streaming_mode=True,
+                max_new_tokens=max_new_tokens,
+            )
+
+        try:
+            wavs, sr = _run_clone()
+        except RuntimeError as exc:
+            error_text = str(exc)
+            if "replication_pad1d_cuda" not in error_text or "BFloat16" not in error_text:
+                raise
+
+            with self._runtime_lock:
+                model_param = next(self.voice_clone.model.parameters())
+                device_map = "cuda" if str(model_param.device).startswith("cuda") else "cpu"
+                if device_map == "cuda" and model_param.dtype == torch.bfloat16:
+                    self.voice_clone = self._load_model(self._voice_clone_path, device_map, torch.float16)
+
+            wavs, sr = _run_clone()
+
         return wavs[0], int(sr)
 
 
