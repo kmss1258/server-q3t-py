@@ -41,8 +41,11 @@ class Settings:
     hf_token: Optional[str] = os.getenv("HF_TOKEN")
     voice_device: str = os.getenv("VOICE_DEVICE", "cuda")
     voice_dtype: str = os.getenv("VOICE_DTYPE", "bfloat16")
+    voice_cuda_fallback_dtype: str = os.getenv("VOICE_CUDA_FALLBACK_DTYPE", "float16")
+    voice_require_cuda: bool = os.getenv("VOICE_REQUIRE_CUDA", "1") == "1"
+    voice_allow_cpu_fallback: bool = os.getenv("VOICE_ALLOW_CPU_FALLBACK", "0") == "1"
     voice_attn: Optional[str] = os.getenv("VOICE_ATTN_IMPL")
-    novasr_device: str = os.getenv("NOVASR_DEVICE", "cpu")
+    novasr_device: str = os.getenv("NOVASR_DEVICE", "cuda")
     novasr_half: bool = os.getenv("NOVASR_HALF", "1") == "1"
 
 
@@ -100,9 +103,19 @@ class TTSService:
         if requested_device == "auto":
             device = "cuda" if torch.cuda.is_available() else "cpu"
 
+        if settings.voice_require_cuda and not device.startswith("cuda"):
+            raise RuntimeError(
+                f"VOICE_REQUIRE_CUDA=1 but selected VOICE_DEVICE resolves to '{device}'. "
+                "Set VOICE_DEVICE=cuda or disable VOICE_REQUIRE_CUDA."
+            )
+
         dtype = _torch_dtype(settings.voice_dtype)
         if device == "cpu":
             dtype = torch.float32
+
+        cuda_fallback_dtype = _torch_dtype(settings.voice_cuda_fallback_dtype)
+        if cuda_fallback_dtype == torch.bfloat16:
+            cuda_fallback_dtype = torch.float16
 
         voice_design_path = snapshot_download(repo_id=VOICE_DESIGN_MODEL_ID, token=settings.hf_token)
         voice_clone_path = snapshot_download(repo_id=VOICE_CLONE_MODEL_ID, token=settings.hf_token)
@@ -119,10 +132,30 @@ class TTSService:
             clone_model = Qwen3TTSModel.from_pretrained(voice_clone_path, **model_kwargs)
             return design_model, clone_model
 
-        try:
-            self.voice_design, self.voice_clone = _load(device, dtype)
-        except (torch.cuda.OutOfMemoryError, RuntimeError):
-            self.voice_design, self.voice_clone = _load("cpu", torch.float32)
+        if device.startswith("cuda"):
+            cuda_attempts = [dtype]
+            if dtype != cuda_fallback_dtype:
+                cuda_attempts.append(cuda_fallback_dtype)
+
+            last_error: Optional[Exception] = None
+            for candidate_dtype in cuda_attempts:
+                try:
+                    self.voice_design, self.voice_clone = _load(device, candidate_dtype)
+                    return
+                except Exception as exc:
+                    last_error = exc
+
+            if settings.voice_allow_cpu_fallback and not settings.voice_require_cuda:
+                self.voice_design, self.voice_clone = _load("cpu", torch.float32)
+                return
+
+            raise RuntimeError(
+                "Failed to load TTS models on CUDA. "
+                f"Tried dtypes {[str(d) for d in cuda_attempts]}. "
+                "Check GPU free memory, CUDA visibility, and model compatibility."
+            ) from last_error
+
+        self.voice_design, self.voice_clone = _load(device, dtype)
 
     def generate_design(self, text: str, language: str, instruct: str, max_new_tokens: int) -> tuple[np.ndarray, int]:
         wavs, sr = self.voice_design.generate_voice_design(
@@ -173,6 +206,15 @@ class NovaSRService:
             if "half" in sig.parameters:
                 fallback_kwargs["half"] = False
             self.model = FastSR(**fallback_kwargs)
+
+        if target_device == "cuda" and torch.cuda.is_available():
+            try:
+                self.model.model = self.model.model.cuda()
+                self.model.device = torch.device("cuda")
+            except RuntimeError:
+                self.model.model = self.model.model.cpu()
+                self.model.device = torch.device("cpu")
+                self.model.half = False
 
         if target_device == "cpu":
             self.model.model = self.model.model.cpu()

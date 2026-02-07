@@ -22,9 +22,12 @@ Default exposed address is `http://127.0.0.1:8080`.
 - `NVIDIA_VISIBLE_DEVICES`: GPU id/uuid (default `0`)
 - `CUDA_VISIBLE_DEVICES`: app-level GPU visibility (default `0`)
 - `VOICE_DEVICE`: model device map (default `cuda`)
-- `VOICE_DTYPE`: `bfloat16`, `float16`, or `float32`
+- `VOICE_DTYPE`: preferred dtype (`bfloat16`, `float16`, or `float32`)
+- `VOICE_CUDA_FALLBACK_DTYPE`: CUDA fallback dtype when preferred dtype fails (default `float16`)
+- `VOICE_REQUIRE_CUDA`: require CUDA for TTS load (`1` default). If CUDA load fails, startup request fails instead of CPU fallback.
+- `VOICE_ALLOW_CPU_FALLBACK`: allow CPU fallback for TTS (`0` default)
 - `VOICE_ATTN_IMPL`: optional (`flash_attention_2` only if flash-attn is installed)
-- `NOVASR_DEVICE`: `cuda`, `cpu`, or `auto` (default `cpu`)
+- `NOVASR_DEVICE`: `cuda`, `cpu`, or `auto` (default `cuda`)
 - `NOVASR_HALF`: `1` or `0`
 - `HOST_BIND_IP`: nginx bind IP (default `0.0.0.0`)
 - `HOST_PORT`: nginx port (default `8080`)
