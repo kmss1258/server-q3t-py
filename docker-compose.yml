@@ -1,0 +1,50 @@
+services:
+  voice-api:
+    image: ${VOICE_IMAGE:-voice-api}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE: ${VOICE_BASE_IMAGE:-nvcr.io/nvidia/pytorch:23.10-py3}
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      VOICE_DEVICE: ${VOICE_DEVICE:-auto}
+      VOICE_DTYPE: ${VOICE_DTYPE:-bfloat16}
+      VOICE_ATTN_IMPL: ${VOICE_ATTN_IMPL:-}
+      NOVASR_DEVICE: ${NOVASR_DEVICE:-cpu}
+      NOVASR_HALF: ${NOVASR_HALF:-0}
+      FFMPEG_PATH: ffmpeg
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-0}
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-0}
+    ipc: host
+    shm_size: "4g"
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    volumes:
+      - ${HF_CACHE_ROOT:-./models/hf-cache}:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["${NVIDIA_VISIBLE_DEVICES:-0}"]
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      voice-api:
+        condition: service_healthy
+    ports:
+      - "${HOST_BIND_IP:-0.0.0.0}:${HOST_PORT:-8080}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped

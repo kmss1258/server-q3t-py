@@ -1,0 +1,21 @@
+00001|지민_속삭이는_20대_여성_ASMR|자기야... 여기 와서 같이 쉴래? 오늘 밤은 특별하게 보내고 싶어... 나랑 함께해줘...|Use a very soft and whispering voice of a woman in her 20s, speaking in a soothing and intimate ASMR style with breathy tones
+00002|민준_침착한_30대_남성_애인|걱정 마. 내가 다 알아서 할게. 너는 그냥 편하게 있어. 내가 널 지켜줄 테니까.|Use a calm and composed voice of a man in his 30s, speaking with steady and reassuring tone like a caring lover
+00003|수연_따뜻한_40대_여성_어머니|우리 아가 많이 힘들었지? 엄마가 이불 덮어줄게. 따뜻하게 자렴.|Use a warm and gentle voice of a woman in her 40s, speaking with motherly affection and nurturing care
+00004|현우_도발적인_20대_남성|뭐? 벌써 그렇게나? 참을성이 없네. 더 참아보라고... 재미있게 해줄 테니까.|Use a teasing and provocative voice of a young man in his 20s, speaking with playful dominance and suggestive tone
+00005|유나_속삭이는_10대_여성_귀여움|저기... 혹시... 저 좀 안아줄 수 있나요? 무서워서 그런데... 곁에 있어주세요...|Use a whispering and cute voice of a teenage girl, speaking with innocence and slight fear in high pitch
+00006|상민_휴식중인_30대_남성_피곤|아... 너무 피곤해. 오늘은 그냥 이대로 누워있고 싶다. 안아줄래? 그냥 이렇게 있자.|Use a tired and weary voice of a man in his 30s, speaking slowly with fatigue and desire for comfort
+00007|서윤_침대옆_20대_여성|오빠... 아직 일어나면 안 돼. 더 함께 있고 싶어... 내 손 잡아줘... 계속...|Use a soft and intimate voice of a woman in her 20s, speaking in bed with sensual and loving tone
+00008|태준_권위적_50대_남성_지배|내 말 잘 들어. 넌 내 거야. 내가 시키는 대로만 하면 돼. 알겠나? 거스르지 마.|Use an authoritative and commanding voice of a man in his 50s, speaking with power, confidence and possessive tone
+00009|하은_속삭이는_20대_여성_밀회|여기 아무도 없어... 우리 둘만의 비밀. 누구에게도 말하면 안 돼요. 우리만의 특별한 시간...|Use a whispering and secretive voice of a young woman in her 20s, speaking with mysterious intimacy
+00010|준호_진지한_40대_남성_사랑|너를 만난 후로 내 인생이 달라졌어. 너 없이는 살 수 없을 것 같아. 정말 사랑해.|Use a serious and passionate voice of a man in his 40s, speaking with deep love and gravity
+00011|소희_수줍은_10대_여성_첫사랑|저기... 좋아해요. 처음이에요 이런 감정... 부끄러워서 말 못 했는데... 정말 좋아해요...|Use a shy and timid voice of a teenage girl, speaking softly with first love innocence and hesitation
+00012|동현_격렬한_20대_남성_NSFW|이대론 안 돼... 참을 수가 없어. 너무 갖고 싶어. 지금 당장... 안아줘... 제발...|Use a vigorous and passionate voice of a young man in his 20s, speaking with intense desire and urgency
+00013|예진_우아한_30대_여성_유혹|오늘 밤 같이 저녁 어때요? 캔들 켜고 와인 한잔 하면서... 특별한 시간 가져요.|Use an elegant and seductive voice of a woman in her 30s, speaking with graceful allure and invitation
+00014|석진_거친_30대_남성_야생|뭘 망설여? 너도 원하고 있잖아. 솔직해져. 내게 안겨봐. 내가 다 해줄게.|Use a rough and gruff voice of a man in his 30s, speaking with husky raw tone and primal attraction
+00015|미영_부드러운_40대_여성_위로|괜찮아요. 천천히 해도 돼요. 제가 옆에 있어줄게요. 편안하게 쉬어요. 다 괜찮을 거예요.|Use a soft and gentle voice of a woman in her 40s, speaking with tenderness and healing care
+00016|재훈_냉소적_30대_남성_도발|하하, 그렇게 애태우지 마. 원하는 게 뭔데? 말해봐. 내가 들어줄 테니까.|Use a cynical and provocative voice of a man in his 30s, speaking with irony and teasing challenge
+00017|다은_활기찬_20대_여성_즐거움|오늘 너무 신났어! 같이 있어서 행복해! 다음에도 또 보자! 정말 재밌었어!|Use a lively and vibrant voice of a young woman in her 20s, speaking with joy and happiness
+00018|영수_지적인_40대_남성_분석|이 감정은 호르몬 작용의 결과야. 하지만 그래도 네가 좋은 건 변하지 않아. 논리적으로도 확실해.|Use an intellectual and knowledgeable voice of a man in his 40s, speaking with wisdom about love
+00019|보라_천진난만한_10대_여성_순수|와! 너무 좋아! 나도 이런 거 해보고 싶었어! 같이 해볼래? 재밌을 것 같아!|Use an innocent and naive voice of a teenage girl, speaking with pure wonder and curiosity
+00020|성훈_무심한_20대_남성_관심|아... 그래요? 음... 뭐 관심 없는 건 아닌데. 조금은 끌리긴 해요. 조금만 더 다가와줄래요?|Use an indifferent but curious voice of a young man in his 20s, speaking with hidden interest
+00021|지은_무심_20대_여성_관성|오빠.. 나 당장 갈 것 같아.. 빨리 보내줬으면 좋겠어. 부탁이야. 제발 안에 해 줄래?|Use a whispering NSFW voice of an animetic high-tone girl in her 10s, speaking whispering intimately with seductive breathiness.
